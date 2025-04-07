@@ -18,26 +18,101 @@ app = dash.Dash(__name__)
 app.title = "Flightwise"
 
 max_days = int(df['daysUntilFlight'].max())
-
 app.layout = html.Div([
-    html.H2("Flightwise", style={"textAlign": "center", "marginBottom": "20px"}),
-    html.H3("Smarter flight booking, backed by data.", style={"textAlign": "center", "marginBottom": "20px", "color": "#555"}),
-    html.H3("Developed By Jared Samson", style={"textAlign": "center", "marginBottom": "20px", "color": "#555"}),
-    
-    dcc.Dropdown(id='starting-airport', options=[{'label': a, 'value': a} for a in starting_airports], placeholder="Select Starting Airport"),
-    dcc.Dropdown(id='destination-airport', placeholder="Select Destination"),
-    dcc.Dropdown(id='airline', placeholder="Select Airline"),
-    dcc.Dropdown(id='cabin', placeholder="Select Cabin Class"),
     html.Div([
-        html.H4("Days Until Flight", style={"marginBottom": "10px", "textAlign": "center"})
-    ], style={"margin": "40px 0", "padding": "0 40px"}),
-    dcc.Slider(id='days-until-flight', min=0, max=max_days, step=1, value=30, marks={i: str(i) for i in range(0, max_days + 1, 30)}, tooltip={"placement": "bottom", "always_visible": True}),
-    html.Button("Predict Fare", id='predict-btn', n_clicks=0),
-    html.H3(id='fare-output'),
-    dcc.Graph(id='route-map'),
-    html.H3("Feature Importance"),
-    dcc.Graph(id='importance-heatmap')
-])
+        html.H1("Flightwise", style={
+            "textAlign": "center",
+            "fontSize": "48px",
+            "marginBottom": "10px",
+            "color": "#003366"
+        }),
+        html.H3("Smarter flight booking, backed by data.", style={
+            "textAlign": "center",
+            "color": "#666",
+            "marginBottom": "30px"
+        }),
+        html.H5("Developed by Jared Samson", style={
+            "textAlign": "center",
+            "color": "#999",
+            "marginBottom": "40px"
+        })
+    ]),
+
+    html.Div([
+
+        html.Div([
+            html.Label("Starting Airport", style={"fontWeight": "bold"}),
+            dcc.Dropdown(
+                id='starting-airport',
+                options=[{'label': a, 'value': a} for a in starting_airports],
+                placeholder="Select Starting Airport"
+            )
+        ], style={"marginBottom": "20px"}),
+
+        html.Div([
+            html.Label("Destination Airport", style={"fontWeight": "bold"}),
+            dcc.Dropdown(id='destination-airport', placeholder="Select Destination")
+        ], style={"marginBottom": "20px"}),
+
+        html.Div([
+            html.Label("Airline", style={"fontWeight": "bold"}),
+            dcc.Dropdown(id='airline', placeholder="Select Airline")
+        ], style={"marginBottom": "20px"}),
+
+        html.Div([
+            html.Label("Cabin Class", style={"fontWeight": "bold"}),
+            dcc.Dropdown(id='cabin', placeholder="Select Cabin Class")
+        ], style={"marginBottom": "20px"}),
+
+        html.Div([
+            html.Label("Days Until Flight", style={
+                "fontWeight": "bold",
+                "textAlign": "center",
+                "marginBottom": "10px"
+            }),
+            dcc.Slider(
+                id='days-until-flight',
+                min=0,
+                max=max_days,
+                step=1,
+                value=30,
+                marks={i: str(i) for i in range(0, max_days + 1, 30)},
+                tooltip={"placement": "bottom", "always_visible": True}
+            )
+        ], style={"margin": "40px 0"}),
+
+        html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
+            "width": "100%",
+            "padding": "12px",
+            "fontSize": "18px",
+            "backgroundColor": "#0066cc",
+            "color": "white",
+            "border": "none",
+            "borderRadius": "6px",
+            "cursor": "pointer"
+        })
+
+    ], style={
+        "maxWidth": "600px",
+        "margin": "0 auto",
+        "padding": "30px",
+        "backgroundColor": "#fefefe",
+        "borderRadius": "12px",
+        "boxShadow": "0 4px 15px rgba(0, 0, 0, 0.1)"
+    }),
+
+    html.Div([
+        html.H3(id='fare-output', style={"textAlign": "center", "marginTop": "40px"}),
+        dcc.Graph(id='route-map', style={"marginTop": "20px"}),
+        html.H3("Feature Importance", style={"textAlign": "center", "marginTop": "40px"}),
+        dcc.Graph(id='importance-heatmap')
+    ], style={
+        "maxWidth": "900px",
+        "margin": "0 auto",
+        "padding": "40px 20px"
+    })
+], style={"backgroundColor": "#f0f4f8", "fontFamily": "Segoe UI, sans-serif", "paddingBottom": "60px"})
+
 
 @app.callback(Output('destination-airport', 'options'), Input('starting-airport', 'value'))
 def update_destinations(start):
