@@ -25,6 +25,7 @@ app.layout = html.Div([
     dcc.Dropdown(id='destination-airport', placeholder="Select Destination"),
     dcc.Dropdown(id='airline', placeholder="Select Airline"),
     dcc.Dropdown(id='cabin', placeholder="Select Cabin Class"),
+    html.H6("Days Until Flight"),
     dcc.Slider(id='days-until-flight', min=0, max=max_days, step=1, value=30, marks={i: str(i) for i in range(0, max_days + 1, 30)}, tooltip={"placement": "bottom", "always_visible": True}),
     html.Button("Predict Fare", id='predict-btn', n_clicks=0),
     html.H3(id='fare-output'),
@@ -108,5 +109,8 @@ def update_importance_heatmap(n):
     fig.update_layout(title="🔍 Feature Importance", height=800, margin=dict(l=150))
     return fig
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8050))  # fallback if PORT isn't set
+    app.run(host="0.0.0.0", port=port, debug=True)
