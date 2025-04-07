@@ -1,0 +1,60 @@
+/* === Google Font: Inter (or fallback to sans-serif) === */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f9fc;
+    color: #1c1e21;
+    margin: 0;
+    padding: 0;
+}
+
+/* General layout */
+h2, h3 {
+    font-weight: 600;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Inputs */
+.Select-control, .dash-dropdown {
+    border-radius: 8px !important;
+    border-color: #ccc !important;
+    font-size: 15px;
+}
+
+input[type="number"], .rc-slider {
+    border-radius: 6px;
+}
+
+/* Button */
+button {
+    font-family: 'Inter', sans-serif;
+    background-color: #2962ff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0039cb;
+}
+
+/* Map + Output */
+#fare-output {
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 20px;
+    color: #1a237e;
+}

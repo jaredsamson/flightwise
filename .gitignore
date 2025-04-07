@@ -1,0 +1,6 @@
+# Ignore the large dataset
+itineraries_snappy.parquet
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
