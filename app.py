@@ -15,12 +15,15 @@ starting_airports = sorted(df['startingAirport'].unique())
 
 # === Dash App ===
 app = dash.Dash(__name__)
-app.title = "Flight Fare Estimator ✈️"
+app.title = "Flightwise"
 
 max_days = int(df['daysUntilFlight'].max())
 
 app.layout = html.Div([
-    html.H2("✈️ Flight Fare Estimator"),
+    html.H2("Flightwise", style={"textAlign": "center", "marginBottom": "20px"}),
+    html.H3("Smarter flight booking, backed by data.", style={"textAlign": "center", "marginBottom": "20px", "color": "#555"}),
+    html.H3("Developed By Jared Samson", style={"textAlign": "center", "marginBottom": "20px", "color": "#555"}),
+    
     dcc.Dropdown(id='starting-airport', options=[{'label': a, 'value': a} for a in starting_airports], placeholder="Select Starting Airport"),
     dcc.Dropdown(id='destination-airport', placeholder="Select Destination"),
     dcc.Dropdown(id='airline', placeholder="Select Airline"),
