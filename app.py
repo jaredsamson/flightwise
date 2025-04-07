@@ -26,16 +26,7 @@ app.layout = html.Div([
     dcc.Dropdown(id='airline', placeholder="Select Airline"),
     dcc.Dropdown(id='cabin', placeholder="Select Cabin Class"),
     html.Div([
-        html.H4("Days Until Flight", style={"marginBottom": "10px", "textAlign": "center"}),
-        dcc.Slider(
-            id='days-until-flight',
-            min=0,
-            max=max_days,
-            step=1,
-            value=30,
-            marks={i: str(i) for i in range(0, max_days + 1, 30)},
-            tooltip={"placement": "bottom", "always_visible": True}
-        )
+        html.H4("Days Until Flight", style={"marginBottom": "10px", "textAlign": "center"})
     ], style={"margin": "40px 0", "padding": "0 40px"}),
     dcc.Slider(id='days-until-flight', min=0, max=max_days, step=1, value=30, marks={i: str(i) for i in range(0, max_days + 1, 30)}, tooltip={"placement": "bottom", "always_visible": True}),
     html.Button("Predict Fare", id='predict-btn', n_clicks=0),
