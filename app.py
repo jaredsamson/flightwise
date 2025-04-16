@@ -170,16 +170,6 @@ def update_date_labels(days):
 @app.callback(
     Output('fare-output', 'children'),
     Output('route-map', 'figure'),
-    Input('predict-btn', 'n_clicks'),
-    State('starting-airport', 'value'),
-    State('destination-airport', 'value'),
-    State('airline', 'value'),
-    State('cabin', 'value'),
-    State('days-until-flight', 'value')
-)
-@app.callback(
-    Output('fare-output', 'children'),
-    Output('route-map', 'figure'),
     Output('route-label', 'children'),
     Input('predict-btn', 'n_clicks'),
     State('starting-airport', 'value'),
