@@ -86,25 +86,52 @@ app.layout = html.Div([
         "backgroundColor": "#ffffff", "borderRight": "1px solid #ddd",
         "boxShadow": "2px 0 6px rgba(0,0,0,0.04)", "minHeight": "100vh"
     }),
-
-
         html.Div([
             html.Div(id='fare-output', style={
-                "fontSize": "28px", "fontWeight": "600",
-                "textAlign": "center", "marginBottom": "30px"
+                "fontSize": "32px",
+                "fontWeight": "700",
+                "textAlign": "center",
+                "color": "#003366",
+                "marginTop": "30px",
+                "letterSpacing": "0.5px"
             }),
-            dcc.Graph(id='route-map', style={"height": "360px", "marginBottom": "40px"}),
-            html.H4("Feature Importance", style={"textAlign": "center"}),
-            dcc.Graph(id='importance-heatmap', style={"height": "400px"})
+
+            html.Div(id='route-label', style={
+                "textAlign": "center",
+                "fontSize": "20px",
+                "fontWeight": "600",
+                "color": "#444",
+                "marginBottom": "10px"
+            }),
+
+            dcc.Graph(id='route-map', style={
+                "height": "500px",
+                "margin": "0 auto",
+                "borderRadius": "8px",
+                "boxShadow": "0 2px 8px rgba(0, 0, 0, 0.05)",
+                "backgroundColor": "#fff"
+            }),
+
+            html.H4("Feature Importance", style={
+                "textAlign": "center",
+                "marginTop": "40px",
+                "color": "#333"
+            }),
+
+            dcc.Graph(id='importance-heatmap', style={
+                "height": "400px",
+                "paddingBottom": "20px"
+            })
         ], style={
-            "flex": "1", "padding": "40px", "overflowX": "auto"
+            "flex": "1",
+            "padding": "40px",
+            "overflowX": "auto"
         })
+
     ], style={
         "display": "flex", "fontFamily": "Inter, sans-serif",
         "backgroundColor": "#f7f9fc"
     })
-
-
 
 @app.callback(Output('destination-airport', 'options'), Input('starting-airport', 'value'))
 def update_destinations(start):
@@ -150,6 +177,17 @@ def update_date_labels(days):
     State('cabin', 'value'),
     State('days-until-flight', 'value')
 )
+@app.callback(
+    Output('fare-output', 'children'),
+    Output('route-map', 'figure'),
+    Output('route-label', 'children'),
+    Input('predict-btn', 'n_clicks'),
+    State('starting-airport', 'value'),
+    State('destination-airport', 'value'),
+    State('airline', 'value'),
+    State('cabin', 'value'),
+    State('days-until-flight', 'value')
+)
 def predict_fare(n, start, dest, airline, cabin, days):
     if None in [start, dest, airline, cabin, days]:
         blank_fig = go.Figure()
@@ -162,7 +200,7 @@ def predict_fare(n, start, dest, airline, cabin, days):
                 'showarrow': False, 'font': {'size': 18}
             }]
         )
-        return "Please complete all fields.", blank_fig
+        return "Please complete all fields.", blank_fig, ""
 
     flight_date = datetime.today() + timedelta(days=days)
     day_of_week = flight_date.weekday()
@@ -175,6 +213,7 @@ def predict_fare(n, start, dest, airline, cabin, days):
         'daysUntilFlight': [days],
         'dayOfWeek': [day_of_week]
     })
+
     for col in cat_features:
         row[col] = pd.Categorical(row[col], categories=X[col].cat.categories)
 
@@ -189,14 +228,30 @@ def predict_fare(n, start, dest, airline, cabin, days):
             lon=[start_coords['Longitude'], dest_coords['Longitude']],
             lat=[start_coords['Latitude'], dest_coords['Latitude']],
             mode='lines+markers',
-            marker=dict(size=8),
-            line=dict(width=2, color='blue')
+            marker=dict(size=10, color='red'),
+            line=dict(width=4, color='royalblue')
         ))
-        fig.update_layout(geo=dict(scope='usa'), title=f"{start} → {dest} Route")
+
+        fig.update_layout(
+            geo=dict(
+                scope='usa',
+                projection_type='albers usa',
+                showland=True,
+                landcolor="lightgray",
+                showlakes=True,
+                lakecolor="lightblue"
+            ),
+            margin=dict(l=40, r=40, t=40, b=30),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+            showlegend=False
+        )
     else:
         fig = go.Figure()
 
-    return f"Predicted Fare: ${pred:.2f}", fig
+    route_str = f"{start} → {dest} Route"
+    return f"Predicted Fare: ${pred:.2f}", fig, route_str
+
 
 @app.callback(Output('importance-heatmap', 'figure'), Input('predict-btn', 'n_clicks'))
 def update_importance_heatmap(n):
