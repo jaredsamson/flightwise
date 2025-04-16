@@ -22,12 +22,9 @@ def train_model(df):
     model = LGBMRegressor(
         n_estimators=300,
         learning_rate=0.1,
-        max_depth=4,
-        min_child_samples=50,
-        feature_fraction=0.8,
-        min_split_gain=0.1,
         random_state=42
     )
+
 
 
     #model = LGBMRegressor(n_estimators=300, random_state=42)
