@@ -37,5 +37,10 @@ def load_filtered_sample(parquet_path="sample_itineraries.parquet", sample_fract
 
     df = pd.concat(sampled_batches, ignore_index=True)
     df['dayOfWeek'] = df['flightDate'].dt.dayofweek
+
+    df['daysUntilFlight'] = df['daysUntilFlight'] / 180
+    df['dayOfWeek'] = df['dayOfWeek'] / 6
+
+
     return df
 
