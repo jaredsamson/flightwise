@@ -81,6 +81,19 @@ app.layout = html.Div([
             )
         ], style={"margin": "40px 0"}),
 
+        html.Div(id='today-date-display', style={
+            "textAlign": "center",
+            "color": "#666",
+            "marginBottom": "5px"
+        }),
+        html.Div(id='flight-date-display', style={
+            "textAlign": "center",
+            "fontWeight": "bold",
+            "color": "#333",
+            "marginBottom": "30px"
+        }),
+
+
         html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
             "width": "100%",
             "padding": "12px",
@@ -134,6 +147,25 @@ def update_cabins(start, dest, airline):
         return []
     mask = (df['startingAirport'] == start) & (df['destinationAirport'] == dest) & (df['segmentsAirlineName'] == airline)
     return [{'label': c, 'value': c} for c in sorted(df[mask]['segmentsCabinCode'].unique())]
+
+
+@app.callback(
+    Output('today-date-display', 'children'),
+    Output('flight-date-display', 'children'),
+    Input('days-until-flight', 'value')
+)
+def update_date_labels(days):
+    from datetime import datetime, timedelta
+
+    today = datetime.today().date()
+    flight_date = today + timedelta(days=days)
+
+    return (
+        f"Today's Date: {today.strftime('%A, %B %d, %Y')}",
+        f"Flight Date: {flight_date.strftime('%A, %B %d, %Y')}"
+    )
+
+
 
 @app.callback(
     Output('fare-output', 'children'),
