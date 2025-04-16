@@ -3,14 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
-num_features = ['dayOfWeek']
-cat_features = [
-    'segmentsAirlineName',
-    'startingAirport',
-    'destinationAirport',
-    'segmentsCabinCode',
-    'daysUntilFlightBucket'
-]
+num_features = ['daysUntilFlight', 'dayOfWeek']
+cat_features = ['segmentsAirlineName', 'startingAirport', 'destinationAirport', 'segmentsCabinCode']
 
 model_features = cat_features + num_features
 
@@ -24,7 +18,19 @@ def train_model(df):
     # Split into train and test
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    model = LGBMRegressor(n_estimators=300, random_state=42)
+
+    model = LGBMRegressor(
+        n_estimators=300,
+        learning_rate=0.1,
+        max_depth=4,
+        min_child_samples=50,
+        feature_fraction=0.8,
+        min_split_gain=0.1,
+        random_state=42
+    )
+
+
+    #model = LGBMRegressor(n_estimators=300, random_state=42)
     model.fit(X_train, y_train, categorical_feature=cat_features)
 
     # Evaluate
