@@ -28,7 +28,13 @@ def train_model(df):
 
 
     #model = LGBMRegressor(n_estimators=300, random_state=42)
-    model.fit(X_train, y_train, categorical_feature=cat_features)
+    model.fit(
+        X_train, y_train,
+        eval_set=[(X_test, y_test)],
+        early_stopping_rounds=25,
+        categorical_feature=cat_features,
+        verbose=False
+    )
 
     # Evaluate
     preds = model.predict(X_test)
