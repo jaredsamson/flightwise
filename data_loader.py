@@ -40,12 +40,5 @@ def load_filtered_sample(parquet_path="sample_itineraries.parquet", sample_fract
     # Add day of week as scaled numeric (0–1)
     df['dayOfWeek'] = df['flightDate'].dt.dayofweek / 6  # optional scaling
 
-    # Bucket daysUntilFlight (no scaling needed)
-    df['daysUntilFlightBucket'] = pd.cut(
-        df['daysUntilFlight'],  # this is already in 0–180 range
-        bins=[0, 3, 7, 14, 30, 60, 90, 180],
-        labels=False
-    )
-
     return df
 

@@ -166,8 +166,8 @@ def predict_fare(n, start, dest, airline, cabin, days):
     for col in cat_features:
         row[col] = pd.Categorical(row[col], categories=X[col].cat.categories)
 
-    pred_log = model.predict(row[model_features])[0]
-    pred = np.expm1(pred_log)
+    pred = model.predict(row[model_features])[0]
+
     pred = np.clip(pred, 50, 1000)
 
     start_coords = airport_coords.get(start)
