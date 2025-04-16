@@ -35,4 +35,7 @@ def load_filtered_sample(parquet_path="sample_itineraries.parquet", sample_fract
             if total_rows >= target_sample_size:
                 break
 
-    return pd.concat(sampled_batches, ignore_index=True)
+    df = pd.concat(sampled_batches, ignore_index=True)
+    df['dayOfWeek'] = df['flightDate'].dt.dayofweek
+    return df
+

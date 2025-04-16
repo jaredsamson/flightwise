@@ -149,13 +149,19 @@ def update_cabins(start, dest, airline):
 def predict_fare(n, start, dest, airline, cabin, days):
     if None in [start, dest, airline, cabin, days]:
         return "Please complete all fields.", go.Figure()
+    
+    from datetime import datetime, timedelta
+
+    flight_date = datetime.today() + timedelta(days=days)
+    day_of_week = flight_date.weekday()  # Monday=0, Sunday=6
 
     row = pd.DataFrame({
         'segmentsAirlineName': [airline],
         'startingAirport': [start],
         'destinationAirport': [dest],
         'segmentsCabinCode': [cabin],
-        'daysUntilFlight': [days]
+        'daysUntilFlight': [days],
+        'dayOfWeek': [day_of_week]
     })
     for col in cat_features:
         row[col] = pd.Categorical(row[col], categories=X[col].cat.categories)

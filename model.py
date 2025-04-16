@@ -4,7 +4,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
 cat_features = ['segmentsAirlineName', 'startingAirport', 'destinationAirport', 'segmentsCabinCode']
-num_features = ['daysUntilFlight']
+num_features = ['daysUntilFlight', 'daysOfWeek']
 model_features = cat_features + num_features
 
 def train_model(df):
