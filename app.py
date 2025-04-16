@@ -26,117 +26,55 @@ app = dash.Dash(
 max_days = int(df['daysUntilFlight'].max())
 app.layout = html.Div([
     html.Div([
-        html.H1("Flightwise", style={
-            "textAlign": "center",
-            "fontSize": "54px",
-            "marginBottom": "5px",
-            "color": "#003366",
-            "fontWeight": "bold",
-            "letterSpacing": "0.5px"
-        }),
-        html.H4("Smarter flight booking, backed by data.", style={
-            "textAlign": "center",
-            "color": "#555",
-            "marginBottom": "5px",
-            "fontWeight": "400"
-        }),
-        html.Div("by Jared Samson", style={
-            "textAlign": "center",
-            "color": "#999",
-            "fontSize": "14px",
-            "marginBottom": "40px"
-        })
-    ]),
-
-    html.Div([
         html.Div([
-            html.Label("Starting Airport", style={"fontWeight": "bold"}),
-            dcc.Dropdown(
-                id='starting-airport',
-                options=[{'label': a, 'value': a} for a in starting_airports],
-                placeholder="Select Starting Airport"
-            )
-        ], style={"marginBottom": "20px"}),
-
-        html.Div([
-            html.Label("Destination Airport", style={"fontWeight": "bold"}),
-            dcc.Dropdown(id='destination-airport', placeholder="Select Destination")
-        ], style={"marginBottom": "20px"}),
-
-        html.Div([
-            html.Label("Airline", style={"fontWeight": "bold"}),
-            dcc.Dropdown(id='airline', placeholder="Select Airline")
-        ], style={"marginBottom": "20px"}),
-
-        html.Div([
-            html.Label("Cabin Class", style={"fontWeight": "bold"}),
-            dcc.Dropdown(id='cabin', placeholder="Select Cabin Class")
-        ], style={"marginBottom": "20px"}),
-
-        html.Div([
-            html.Label("Days Until Flight", style={
-                "fontWeight": "bold",
-                "textAlign": "center",
-                "marginBottom": "10px"
+            html.H1("Flightwise", style={
+                "fontSize": "36px", "marginBottom": "5px", "color": "#003366",
+                "fontWeight": "bold", "letterSpacing": "0.5px"
             }),
-            dcc.Slider(
-                id='days-until-flight',
-                min=0,
-                max=max_days,
-                step=1,
-                value=30,
-                marks={i: str(i) for i in range(0, max_days + 1, 30)},
-                tooltip={"placement": "bottom", "always_visible": True}
-            )
-        ], style={"margin": "40px 0 10px 0"}),
+            html.H4("Smarter flight booking, backed by data.", style={
+                "color": "#555", "marginBottom": "25px", "fontWeight": "400"
+            }),
+            html.Div("by Jared Samson", style={
+                "color": "#999", "fontSize": "13px", "marginBottom": "30px"
+            }),
 
-        html.Div(id='today-date-display', style={
-            "textAlign": "center",
-            "color": "#666",
-            "marginBottom": "5px"
+            html.Label("Starting Airport"), dcc.Dropdown(id='starting-airport'),
+            html.Label("Destination Airport"), dcc.Dropdown(id='destination-airport'),
+            html.Label("Airline"), dcc.Dropdown(id='airline'),
+            html.Label("Cabin Class"), dcc.Dropdown(id='cabin'),
+            html.Label("Days Until Flight"),
+            dcc.Slider(id='days-until-flight'),
+
+            html.Div(id='today-date-display', style={"marginTop": "10px", "color": "#555"}),
+            html.Div(id='flight-date-display', style={"marginBottom": "20px", "fontWeight": "bold"}),
+
+            html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
+                "marginTop": "20px", "width": "100%", "padding": "12px", "fontSize": "16px",
+                "backgroundColor": "#0066cc", "color": "white", "border": "none",
+                "borderRadius": "6px", "cursor": "pointer", "transition": "0.2s"
+            })
+        ], style={
+            "width": "340px", "padding": "30px",
+            "backgroundColor": "#ffffff", "borderRight": "1px solid #ddd",
+            "boxShadow": "2px 0 6px rgba(0,0,0,0.04)", "minHeight": "100vh"
         }),
-        html.Div(id='flight-date-display', style={
-            "textAlign": "center",
-            "fontWeight": "bold",
-            "color": "#333",
-            "marginBottom": "20px"
-        }),
 
-        html.Hr(style={"marginTop": "10px", "marginBottom": "30px", "borderColor": "#ccc"}),
-
-        html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
-            "width": "100%",
-            "padding": "12px",
-            "fontSize": "18px",
-            "backgroundColor": "#0066cc",
-            "color": "white",
-            "border": "none",
-            "borderRadius": "6px",
-            "cursor": "pointer",
-            "transition": "background-color 0.2s ease-in-out",
-            "textAlign": "center"
+        html.Div([
+            html.Div(id='fare-output', style={
+                "fontSize": "28px", "fontWeight": "600",
+                "textAlign": "center", "marginBottom": "30px"
+            }),
+            dcc.Graph(id='route-map', style={"height": "360px", "marginBottom": "40px"}),
+            html.H4("Feature Importance", style={"textAlign": "center"}),
+            dcc.Graph(id='importance-heatmap', style={"height": "400px"})
+        ], style={
+            "flex": "1", "padding": "40px", "overflowX": "auto"
         })
-
     ], style={
-        "maxWidth": "600px",
-        "margin": "0 auto",
-        "padding": "30px",
-        "backgroundColor": "#ffffff",
-        "borderRadius": "12px",
-        "boxShadow": "0 4px 15px rgba(0, 0, 0, 0.1)"
-    }),
-
-    html.Div([
-        html.H3(id='fare-output', style={"textAlign": "center", "marginTop": "40px"}),
-        dcc.Graph(id='route-map', style={"marginTop": "20px"}),
-        html.H3("Feature Importance", style={"textAlign": "center", "marginTop": "40px"}),
-        dcc.Graph(id='importance-heatmap')
-    ], style={
-        "maxWidth": "900px",
-        "margin": "0 auto",
-        "padding": "40px 20px"
+        "display": "flex", "fontFamily": "Inter, sans-serif",
+        "backgroundColor": "#f7f9fc"
     })
-], style={"backgroundColor": "#f0f4f8", "fontFamily": "Segoe UI, sans-serif", "paddingBottom": "60px"})
+])
 
 
 @app.callback(Output('destination-airport', 'options'), Input('starting-airport', 'value'))

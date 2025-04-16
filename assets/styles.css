@@ -1,4 +1,4 @@
-/* === Google Font: Inter (or fallback to sans-serif) === */
+/* === Google Font: Inter === */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
 body {
@@ -9,52 +9,89 @@ body {
     padding: 0;
 }
 
-/* General layout */
-h2, h3 {
+/* Headings */
+h1, h2, h3 {
     font-weight: 600;
+    margin: 0 0 10px;
 }
 
+h1 {
+    font-size: 2.75rem;
+    color: #003366;
+}
+
+h2, h3 {
+    font-size: 1.5rem;
+    color: #222;
+}
+
+/* Layout Container */
 .container {
     max-width: 1000px;
     margin: 40px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.06);
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Inputs */
+/* Dropdowns and Inputs */
 .Select-control, .dash-dropdown {
     border-radius: 8px !important;
-    border-color: #ccc !important;
+    border: 1px solid #ccc !important;
     font-size: 15px;
+    padding: 6px 10px;
+    background-color: #fff;
 }
 
-input[type="number"], .rc-slider {
+/* Slider */
+.rc-slider {
+    margin: 20px 0;
+}
+
+input[type="number"] {
     border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px;
 }
 
-/* Button */
+/* Button Styling */
 button {
     font-family: 'Inter', sans-serif;
     background-color: #2962ff;
     color: white;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
     margin-top: 20px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
 }
 
 button:hover {
     background-color: #0039cb;
 }
 
-/* Map + Output */
+/* Prediction Output */
 #fare-output {
-    font-size: 20px;
-    font-weight: 500;
-    margin-top: 20px;
+    font-size: 22px;
+    font-weight: 600;
     color: #1a237e;
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* General Spacing */
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 30px 0;
 }
