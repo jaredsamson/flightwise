@@ -3,8 +3,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
-cat_features = ['segmentsAirlineName', 'startingAirport', 'destinationAirport', 'segmentsCabinCode']
-num_features = ['daysUntilFlight', 'dayOfWeek']
+num_features = ['dayOfWeek']
+cat_features = [
+    'segmentsAirlineName',
+    'startingAirport',
+    'destinationAirport',
+    'segmentsCabinCode',
+    'daysUntilFlightBucket'
+]
+
 model_features = cat_features + num_features
 
 def train_model(df):
