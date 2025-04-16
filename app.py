@@ -26,38 +26,67 @@ app = dash.Dash(
 max_days = int(df['daysUntilFlight'].max())
 app.layout = html.Div([
     html.Div([
-        html.Div([
-            html.H1("Flightwise", style={
-                "fontSize": "36px", "marginBottom": "5px", "color": "#003366",
-                "fontWeight": "bold", "letterSpacing": "0.5px"
-            }),
-            html.H4("Smarter flight booking, backed by data.", style={
-                "color": "#555", "marginBottom": "25px", "fontWeight": "400"
-            }),
-            html.Div("by Jared Samson", style={
-                "color": "#999", "fontSize": "13px", "marginBottom": "30px"
-            }),
-
-            html.Label("Starting Airport"), dcc.Dropdown(id='starting-airport'),
-            html.Label("Destination Airport"), dcc.Dropdown(id='destination-airport'),
-            html.Label("Airline"), dcc.Dropdown(id='airline'),
-            html.Label("Cabin Class"), dcc.Dropdown(id='cabin'),
-            html.Label("Days Until Flight"),
-            dcc.Slider(id='days-until-flight'),
-
-            html.Div(id='today-date-display', style={"marginTop": "10px", "color": "#555"}),
-            html.Div(id='flight-date-display', style={"marginBottom": "20px", "fontWeight": "bold"}),
-
-            html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
-                "marginTop": "20px", "width": "100%", "padding": "12px", "fontSize": "16px",
-                "backgroundColor": "#0066cc", "color": "white", "border": "none",
-                "borderRadius": "6px", "cursor": "pointer", "transition": "0.2s"
-            })
-        ], style={
-            "width": "340px", "padding": "30px",
-            "backgroundColor": "#ffffff", "borderRight": "1px solid #ddd",
-            "boxShadow": "2px 0 6px rgba(0,0,0,0.04)", "minHeight": "100vh"
+        html.H1("Flightwise", style={
+            "fontSize": "36px", "marginBottom": "5px", "color": "#003366",
+            "fontWeight": "bold", "letterSpacing": "0.5px"
         }),
+        html.H4("Smarter flight booking, backed by data.", style={
+            "color": "#555", "marginBottom": "25px", "fontWeight": "400"
+        }),
+        html.Div("by Jared Samson", style={
+            "color": "#999", "fontSize": "13px", "marginBottom": "30px"
+        }),
+
+        html.Label("Starting Airport"),
+        dcc.Dropdown(
+            id='starting-airport',
+            options=[{'label': a, 'value': a} for a in starting_airports],
+            placeholder="Select Starting Airport"
+        ),
+
+        html.Label("Destination Airport"),
+        dcc.Dropdown(
+            id='destination-airport',
+            placeholder="Select Destination Airport"
+        ),
+
+        html.Label("Airline"),
+        dcc.Dropdown(
+            id='airline',
+            placeholder="Select Airline"
+        ),
+
+        html.Label("Cabin Class"),
+        dcc.Dropdown(
+            id='cabin',
+            placeholder="Select Cabin Class"
+        ),
+
+        html.Label("Days Until Flight"),
+        dcc.Slider(
+            id='days-until-flight',
+            min=0,
+            max=max_days,
+            step=1,
+            value=30,
+            marks={i: str(i) for i in range(0, max_days + 1, 30)},
+            tooltip={"placement": "bottom", "always_visible": True}
+        ),
+
+        html.Div(id='today-date-display', style={"marginTop": "10px", "color": "#555"}),
+        html.Div(id='flight-date-display', style={"marginBottom": "20px", "fontWeight": "bold"}),
+
+        html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
+            "marginTop": "20px", "width": "100%", "padding": "12px", "fontSize": "16px",
+            "backgroundColor": "#0066cc", "color": "white", "border": "none",
+            "borderRadius": "6px", "cursor": "pointer", "transition": "0.2s"
+        })
+    ], style={
+        "width": "340px", "padding": "30px",
+        "backgroundColor": "#ffffff", "borderRight": "1px solid #ddd",
+        "boxShadow": "2px 0 6px rgba(0,0,0,0.04)", "minHeight": "100vh"
+    }),
+
 
         html.Div([
             html.Div(id='fare-output', style={
@@ -74,7 +103,7 @@ app.layout = html.Div([
         "display": "flex", "fontFamily": "Inter, sans-serif",
         "backgroundColor": "#f7f9fc"
     })
-])
+
 
 
 @app.callback(Output('destination-airport', 'options'), Input('starting-airport', 'value'))
