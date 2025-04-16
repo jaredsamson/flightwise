@@ -6,6 +6,8 @@ from model import train_model, model_features, cat_features
 from data_loader import load_filtered_sample
 from utils import load_airport_coords
 import numpy as np
+from datetime import datetime, timedelta
+import os
 
 # === Load + train ===
 df = load_filtered_sample()
@@ -14,32 +16,39 @@ airport_coords = load_airport_coords()
 starting_airports = sorted(df['startingAirport'].unique())
 
 # === Dash App ===
-app = dash.Dash(__name__)
-app.title = "Flightwise"
+app = dash.Dash(
+    __name__,
+    title="Flightwise ✈️",
+    update_title="Loading flight fare model...",
+    suppress_callback_exceptions=True
+)
 
 max_days = int(df['daysUntilFlight'].max())
 app.layout = html.Div([
     html.Div([
         html.H1("Flightwise", style={
             "textAlign": "center",
-            "fontSize": "48px",
-            "marginBottom": "10px",
-            "color": "#003366"
+            "fontSize": "54px",
+            "marginBottom": "5px",
+            "color": "#003366",
+            "fontWeight": "bold",
+            "letterSpacing": "0.5px"
         }),
-        html.H3("Smarter flight booking, backed by data.", style={
+        html.H4("Smarter flight booking, backed by data.", style={
             "textAlign": "center",
-            "color": "#666",
-            "marginBottom": "30px"
+            "color": "#555",
+            "marginBottom": "5px",
+            "fontWeight": "400"
         }),
-        html.H5("Developed by Jared Samson", style={
+        html.Div("by Jared Samson", style={
             "textAlign": "center",
             "color": "#999",
+            "fontSize": "14px",
             "marginBottom": "40px"
         })
     ]),
 
     html.Div([
-
         html.Div([
             html.Label("Starting Airport", style={"fontWeight": "bold"}),
             dcc.Dropdown(
@@ -79,7 +88,7 @@ app.layout = html.Div([
                 marks={i: str(i) for i in range(0, max_days + 1, 30)},
                 tooltip={"placement": "bottom", "always_visible": True}
             )
-        ], style={"margin": "40px 0"}),
+        ], style={"margin": "40px 0 10px 0"}),
 
         html.Div(id='today-date-display', style={
             "textAlign": "center",
@@ -90,9 +99,10 @@ app.layout = html.Div([
             "textAlign": "center",
             "fontWeight": "bold",
             "color": "#333",
-            "marginBottom": "30px"
+            "marginBottom": "20px"
         }),
 
+        html.Hr(style={"marginTop": "10px", "marginBottom": "30px", "borderColor": "#ccc"}),
 
         html.Button("Predict Fare", id='predict-btn', n_clicks=0, style={
             "width": "100%",
@@ -102,14 +112,16 @@ app.layout = html.Div([
             "color": "white",
             "border": "none",
             "borderRadius": "6px",
-            "cursor": "pointer"
+            "cursor": "pointer",
+            "transition": "background-color 0.2s ease-in-out",
+            "textAlign": "center"
         })
 
     ], style={
         "maxWidth": "600px",
         "margin": "0 auto",
         "padding": "30px",
-        "backgroundColor": "#fefefe",
+        "backgroundColor": "#ffffff",
         "borderRadius": "12px",
         "boxShadow": "0 4px 15px rgba(0, 0, 0, 0.1)"
     }),
@@ -148,24 +160,18 @@ def update_cabins(start, dest, airline):
     mask = (df['startingAirport'] == start) & (df['destinationAirport'] == dest) & (df['segmentsAirlineName'] == airline)
     return [{'label': c, 'value': c} for c in sorted(df[mask]['segmentsCabinCode'].unique())]
 
-
 @app.callback(
     Output('today-date-display', 'children'),
     Output('flight-date-display', 'children'),
     Input('days-until-flight', 'value')
 )
 def update_date_labels(days):
-    from datetime import datetime, timedelta
-
     today = datetime.today().date()
     flight_date = today + timedelta(days=days)
-
     return (
         f"Today's Date: {today.strftime('%A, %B %d, %Y')}",
         f"Flight Date: {flight_date.strftime('%A, %B %d, %Y')}"
     )
-
-
 
 @app.callback(
     Output('fare-output', 'children'),
@@ -177,15 +183,22 @@ def update_date_labels(days):
     State('cabin', 'value'),
     State('days-until-flight', 'value')
 )
-
 def predict_fare(n, start, dest, airline, cabin, days):
     if None in [start, dest, airline, cabin, days]:
-        return "Please complete all fields.", go.Figure()
-    
-    from datetime import datetime, timedelta
+        blank_fig = go.Figure()
+        blank_fig.update_layout(
+            xaxis={'visible': False},
+            yaxis={'visible': False},
+            annotations=[{
+                'text': "Please complete all fields to see prediction.",
+                'xref': 'paper', 'yref': 'paper',
+                'showarrow': False, 'font': {'size': 18}
+            }]
+        )
+        return "Please complete all fields.", blank_fig
 
     flight_date = datetime.today() + timedelta(days=days)
-    day_of_week = flight_date.weekday()  # Monday=0, Sunday=6
+    day_of_week = flight_date.weekday()
 
     row = pd.DataFrame({
         'segmentsAirlineName': [airline],
@@ -199,7 +212,6 @@ def predict_fare(n, start, dest, airline, cabin, days):
         row[col] = pd.Categorical(row[col], categories=X[col].cat.categories)
 
     pred = model.predict(row[model_features])[0]
-
     pred = np.clip(pred, 50, 1000)
 
     start_coords = airport_coords.get(start)
@@ -223,13 +235,21 @@ def predict_fare(n, start, dest, airline, cabin, days):
 def update_importance_heatmap(n):
     importances = model.feature_importances_
     df_imp = pd.DataFrame({'Feature': model_features, 'Importance': importances}).sort_values(by='Importance')
-    fig = go.Figure(go.Bar(x=df_imp['Importance'], y=df_imp['Feature'], orientation='h',
-                           marker=dict(color=df_imp['Importance'], colorscale='YlOrRd')))
-    fig.update_layout(title="🔍 Feature Importance", height=800, margin=dict(l=150))
+    fig = go.Figure(go.Bar(
+        x=df_imp['Importance'],
+        y=df_imp['Feature'],
+        orientation='h',
+        marker=dict(color=df_imp['Importance'], colorscale='YlOrRd')
+    ))
+    fig.update_layout(
+        title="🔍 Top Influences on Predicted Fare",
+        height=600,
+        margin=dict(l=120, r=30, t=50, b=40),
+        xaxis_title="Importance",
+        yaxis_title="Feature"
+    )
     return fig
 
-import os
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8050))  # fallback if PORT isn't set
+    port = int(os.environ.get("PORT", 8050))
     app.run(host="0.0.0.0", port=port, debug=True)
